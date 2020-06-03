@@ -30,20 +30,22 @@ typedef struct __attribute__((packed)) qbi_header {
 #include <unistd.h>
 #include <qbi.h>
 
-int main() {
+
+int main(int argc, char** argv) {
+	const uint16_t width = (argc > 2)? atoi(argv[1]) : 0x320;
+	const uint16_t height = (argc > 2)? atoi(argv[2]) : 0x320;
 	int fd = creat("test.qbi", 0);
-	//uint64_t head =  0x0320032000000060;
-	//write(fd, &head, sizeof(qbi_header));
-	qbi_header q = { {0, QBI_24BIT, 0}, 0x320, 0x320};
+	qbi_header q = { {0, QBI_24BIT, 0}, width, height};
 	qbi_write_header(fd, &q);
-	for(int i = 0; i < 0x320; i++) {
-		for(int j = 0; j < 0x320; j++) {
-			uint32_t rgb = j << 16 | i << 8 | i^j;
-			//rgb = ~rgb;
-			//read(randfd, &rgb, 4);
-			write(fd, (uint32_t*)&rgb, 3);
+	qbi_pixel_24 image[width][height];
+	for(int i = 0; i < width; i++) {
+		for(int j = 0; j < height; j++) {
+			image[i][j].r = j^i;
+			image[i][j].g = i;
+			image[i][j].b = j;
 		}
 	}
+	write(fd, image, width*height*3);
 	close(fd);
 }
 ```
