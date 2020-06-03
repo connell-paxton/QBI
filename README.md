@@ -23,7 +23,7 @@ typedef struct __attribute__((packed)) qbi_header {
 
 ## Usage:
 #### Creating:
-```
+```c
 #include <stdint.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -38,7 +38,7 @@ int main() {
 	qbi_write_header(fd, &q);
 	for(int i = 0; i < 0x320; i++) {
 		for(int j = 0; j < 0x320; j++) {
-			uint32_t rgb = j << 16 | i << 8 | i^j;//rand() % 256;
+			uint32_t rgb = j << 16 | i << 8 | i^j;
 			//rgb = ~rgb;
 			//read(randfd, &rgb, 4);
 			write(fd, (uint32_t*)&rgb, 3);
